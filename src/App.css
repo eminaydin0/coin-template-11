@@ -1,0 +1,79 @@
+/* Epic Games Store Style - App CSS */
+.App {
+  min-height: 100vh;
+  background: #121212;
+}
+
+/* Page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.page-exit {
+  opacity: 1;
+}
+
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Epic style hover effects */
+.epic-hover-scale {
+  transition: transform 0.2s ease;
+}
+
+.epic-hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* Epic style cards */
+.epic-game-card {
+  background: #202020;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.epic-game-card:hover {
+  background: #2a2a2a;
+  transform: translateY(-4px);
+}
+
+/* Epic style gradients */
+.epic-gradient-blue {
+  background: linear-gradient(135deg, #0078F2 0%, #00D4FF 100%);
+}
+
+.epic-gradient-dark {
+  background: linear-gradient(180deg, transparent 0%, #121212 100%);
+}
+
+/* Line clamp utilities */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}

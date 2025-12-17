@@ -1,0 +1,212 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Rubik Bubbles";
+  src: url("/fonts/Rubik_Bubbles/RubikBubbles-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  font-family: "Inter", system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.95);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Epic Games Style CSS Variables */
+:root {
+  --epic-cyan: #00D4FF;
+  --epic-blue: #0078F2;
+  --epic-dark: #121212;
+  --epic-card: #202020;
+  --epic-card-hover: #2A2A2A;
+  --epic-border: #303030;
+  --epic-text: #FFFFFF;
+  --epic-text-secondary: #A0A0A0;
+  --epic-success: #2ECC71;
+  --epic-warning: #F39C12;
+  --epic-danger: #E74C3C;
+}
+
+/* Ensure header stays fixed */
+header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999 !important;
+  width: 100% !important;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #121212;
+  color: var(--epic-text);
+  font-family: "Inter", system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar - Epic Style */
+::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #404040 !important;
+  border-radius: 4px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #505050 !important;
+}
+
+* {
+  scrollbar-width: thin !important;
+  scrollbar-color: #404040 #1a1a1a !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Epic Games Card Styles */
+.epic-card {
+  background: var(--epic-card);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.epic-card:hover {
+  background: var(--epic-card-hover);
+  transform: translateY(-2px);
+}
+
+/* Epic Button Styles */
+.epic-btn-primary {
+  background: var(--epic-blue);
+  color: white;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.epic-btn-primary:hover {
+  background: #0066CC;
+}
+
+.epic-btn-secondary {
+  background: transparent;
+  color: white;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 4px;
+  border: 1px solid #404040;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.epic-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #606060;
+}
+
+/* Epic Input Styles */
+.epic-input {
+  background: #2a2a2a;
+  border: 1px solid #404040;
+  border-radius: 4px;
+  padding: 12px 16px;
+  color: white;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.epic-input:focus {
+  outline: none;
+  border-color: var(--epic-blue);
+  box-shadow: 0 0 0 2px rgba(0, 120, 242, 0.2);
+}
+
+.epic-input::placeholder {
+  color: #707070;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease forwards;
+}
+
+/* Scrollbar Hide */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Epic Tag Style */
+.epic-tag {
+  background: rgba(0, 212, 255, 0.1);
+  color: var(--epic-cyan);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Epic Free Badge */
+.epic-free-badge {
+  background: var(--epic-blue);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #121212;
+  }
+}
