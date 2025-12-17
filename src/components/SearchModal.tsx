@@ -2,56 +2,78 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, X, Gamepad2 } from 'lucide-react';
-import { getHomepageItems } from '../services/api';
+import api from '../services/api';
 
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  homepageItems?: Array<{
-    id: string;
-    name: string;
-    price: number | string;
-    slug: string;
-    url?: string;
-  }>;
+}
+
+interface Product {
+  id?: string;
+  name: string;
+  price: number | string;
+  slug: string;
+  url?: string;
 }
 
 const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
   const [query, setQuery] = useState('');
-  const [items, setItems] = useState<Array<{
-    id: string;
-    name: string;
-    price: number | string;
-    slug: string;
-    url?: string;
-  }>>([]);
+  const [items, setItems] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
       inputRef.current?.focus();
-      loadItems();
+      if (items.length === 0) {
+        loadAllProducts();
+      }
     } else {
       setQuery('');
     }
   }, [isOpen]);
 
-  const loadItems = async () => {
+  const loadAllProducts = async () => {
     setLoading(true);
     try {
-      const response = await getHomepageItems(50);
-      setItems(response.data || []);
+      // Kategorileri al
+      const categoriesRes = await api.get('/categories');
+      const categories = categoriesRes.data || [];
+      
+      const allProducts: Product[] = [];
+      const seenSlugs = new Set<string>();
+      
+      // Her kategori için ürünleri al
+      for (const cat of categories) {
+        try {
+          const res = await api.get(`/category-products?slug=${cat.slug}`);
+          const products = res.data || [];
+          
+          if (Array.isArray(products)) {
+            products.forEach((p: Product) => {
+              if (p && p.slug && !seenSlugs.has(p.slug)) {
+                seenSlugs.add(p.slug);
+                allProducts.push(p);
+              }
+            });
+          }
+        } catch (e) {
+          // Skip failed category
+        }
+      }
+      
+      setItems(allProducts);
     } catch (error) {
-      console.error('Search items load error:', error);
+      console.error('Search load error:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(query.toLowerCase())
-  );
+  const filteredItems = query.length > 0 
+    ? items.filter((item) => item.name.toLowerCase().includes(query.toLowerCase()))
+    : [];
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -71,10 +93,8 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
           className="fixed inset-0 z-[9999] flex items-start justify-center pt-20 px-4"
           onClick={onClose}
         >
-          {/* Backdrop */}
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
 
-          {/* Modal */}
           <motion.div
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -83,12 +103,11 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
             className="relative w-full max-w-2xl bg-[#202020] rounded-lg shadow-2xl border border-[#303030] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Search Input */}
             <div className="flex items-center gap-3 px-4 py-3 border-b border-[#303030]">
               <Search className="h-5 w-5 text-gray-500" />
-                    <input
+              <input
                 ref={inputRef}
-                      type="text"
+                type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Mağazada ara..."
@@ -100,41 +119,43 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
               >
                 <X className="h-5 w-5" />
               </button>
-                  </div>
+            </div>
 
-            {/* Results */}
             <div className="max-h-[60vh] overflow-y-auto">
               {loading ? (
-                <div className="p-8 text-center text-gray-500">Yükleniyor...</div>
+                <div className="p-8 text-center text-gray-500">
+                  <div className="animate-spin w-6 h-6 border-2 border-gray-500 border-t-white rounded-full mx-auto mb-2"></div>
+                  Ürünler yükleniyor...
+                </div>
               ) : query.length === 0 ? (
                 <div className="p-8 text-center text-gray-500">
                   Aramak için bir şeyler yazın...
-                    </div>
+                </div>
               ) : filteredItems.length === 0 ? (
                 <div className="p-8 text-center text-gray-500">
                   "{query}" için sonuç bulunamadı
                 </div>
               ) : (
-                    <div className="p-2">
-                  {filteredItems.slice(0, 10).map((item) => (
+                <div className="p-2">
+                  {filteredItems.slice(0, 30).map((item) => (
                     <Link
-                            key={item.id}
-                              to={`/epin/${item.slug}`}
+                      key={item.slug}
+                      to={`/epin/${item.slug}`}
                       onClick={onClose}
                       className="flex items-center gap-4 p-3 rounded-lg hover:bg-[#2a2a2a] transition-colors"
                     >
                       <div className="w-12 h-12 rounded overflow-hidden bg-[#303030] flex-shrink-0">
-                                    {item.url ? (
-                                      <img
-                                        src={item.url}
-                                        alt={item.name}
-                                        className="w-full h-full object-cover"
+                        {item.url ? (
+                          <img
+                            src={item.url}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <Gamepad2 className="h-5 w-5 text-gray-600" />
-                                    </div>
-                                  )}
+                          </div>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-sm font-medium text-white truncate">
@@ -146,14 +167,14 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                       </div>
                     </Link>
                   ))}
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
+            </div>
 
-            {/* Footer */}
             <div className="px-4 py-3 border-t border-[#303030] flex items-center justify-between text-xs text-gray-500">
               <span>
-                {filteredItems.length > 0 && `${filteredItems.length} sonuç bulundu`}
+                {items.length > 0 && `${items.length} ürün yüklendi`}
+                {filteredItems.length > 0 && ` • ${filteredItems.length} sonuç`}
               </span>
               <span>
                 <kbd className="px-1.5 py-0.5 bg-[#303030] rounded text-gray-400">ESC</kbd>

@@ -13,7 +13,7 @@ const Footer = () => {
           {/* Brand Info */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="inline-block mb-4">
-              <span className="bg-gradient-to-r from-purple-300 to-purple-300 bg-clip-text text-transparent font-bold text-xl">
+              <span className="text-white font-bold text-xl">
                 {siteName}
               </span>
             </Link>

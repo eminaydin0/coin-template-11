@@ -6,7 +6,7 @@ import SEOHead from '../components/SEOHead';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ScrollToTopButton from '../components/ScrollToTopButton';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Gift, Sparkles, TrendingUp, Clock, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Gift, Sparkles, TrendingUp, ArrowRight } from 'lucide-react';
 
 interface HomepageItem {
   id: string;
@@ -15,9 +15,11 @@ interface HomepageItem {
   originalPrice?: number | string;
   slug: string;
   url?: string;
+  detail?: string | null;
   isPopular?: boolean;
   rating?: number;
   people?: number;
+  categoryName?: string;
   category?: {
     name: string;
   };
@@ -93,7 +95,7 @@ const HomePage = () => {
                     heroList={heroList}
             currentIndex={currentHeroIndex}
             setCurrentIndex={setCurrentHeroIndex}
-            homepageItems={homepageItems.slice(0, 4)}
+            homepageItems={homepageItems.slice(0, 5)}
           />
         )}
 
@@ -103,39 +105,32 @@ const HomePage = () => {
             <PromoBanner
               title="YENİ ÜRÜNLER"
               subtitle="En son çıkan oyunlar"
-              bgColor="from-emerald-600 to-emerald-800"
+              bgColor="from-[#0078F2] to-[#0055AA]"
               icon={<Sparkles className="h-6 w-6" />}
             />
             <PromoBanner
               title="POPÜLER"
               subtitle="En çok satanlar"
-              bgColor="from-amber-500 to-orange-600"
+              bgColor="from-[#00D4FF] to-[#0078F2]"
               icon={<TrendingUp className="h-6 w-6" />}
             />
             <PromoBanner
               title="FIRSATLAR"
               subtitle="Özel indirimler"
-              bgColor="from-purple-600 to-purple-800"
+              bgColor="from-[#0066CC] to-[#003366]"
               icon={<Gift className="h-6 w-6" />}
             />
           </div>
         </div>
 
-        {/* New Items Section */}
-        <GameCarouselSection
-          title="Yeni Şeyler Keşfet"
-          items={homepageItems.slice(0, 10)}
-          showArrow
-        />
+        {/* New Items Section - Featured Carousel */}
+        <NewItemsCarousel items={homepageItems.slice(0, 10)} />
 
         {/* Free Games Section - Epic Style */}
         <FreeGamesSection items={homepageItems.slice(0, 2)} />
 
         {/* Popular Items */}
-        <GameCarouselSection
-          title="Popüler Ürünler"
-          items={homepageItems.slice(5, 15)}
-        />
+        <PopularSection items={homepageItems.slice(5, 15)} />
 
         {/* Categories Section */}
         <CategoriesSection categories={categories} />
@@ -310,6 +305,149 @@ const PromoBanner = ({
   </Link>
 );
 
+// New Items Carousel - Main Featured Style
+const NewItemsCarousel = ({ items }: { items: HomepageItem[] }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (items.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % items.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [items.length]);
+
+  if (items.length === 0) return null;
+
+  const current = items[currentIndex];
+
+  return (
+    <div className="px-4 lg:px-8 py-6">
+      <div className="flex items-center justify-between mb-4">
+        <Link to="/oyunlar" className="flex items-center gap-2 group">
+          <h2 className="text-xl font-bold text-white">Yeni Şeyler Keşfet</h2>
+          <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all" />
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        {/* Main Featured Item */}
+        <div className="lg:col-span-3 relative h-[350px] lg:h-[400px] rounded-lg overflow-hidden group">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current.slug}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0"
+            >
+              {current.url ? (
+                <img
+                  src={current.url}
+                  alt={current.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-[#202020] to-[#303030] flex items-center justify-center">
+                  <span className="text-gray-600 text-6xl font-bold">{current.name.charAt(0)}</span>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent" />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Content */}
+          <div className="absolute bottom-0 left-0 right-0 p-6">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <p className="text-sm text-[#00D4FF] mb-2">{current.categoryName || current.category?.name}</p>
+              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-2">{current.name}</h3>
+              <p className="text-xl font-bold text-white mb-4">
+                {typeof current.price === 'number' ? `₺${current.price.toLocaleString('tr-TR')}` : current.price}
+              </p>
+              <Link
+                to={`/epin/${current.slug}`}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#0078F2] text-white font-semibold rounded hover:bg-[#0066CC] transition-colors"
+              >
+                İncele
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* Navigation Arrows */}
+          {items.length > 1 && (
+            <>
+              <button
+                onClick={() => setCurrentIndex(currentIndex === 0 ? items.length - 1 : currentIndex - 1)}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => setCurrentIndex((currentIndex + 1) % items.length)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </>
+          )}
+
+          {/* Dots */}
+          {items.length > 1 && (
+            <div className="absolute bottom-4 right-4 flex gap-2">
+              {items.slice(0, 6).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentIndex(i)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    i === currentIndex ? 'bg-white w-6' : 'bg-white/40'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Side Items */}
+        <div className="hidden lg:flex flex-col gap-2">
+          {items.slice(0, 5).map((item, i) => (
+            <button
+              key={item.slug}
+              onClick={() => setCurrentIndex(i)}
+              className={`flex items-center gap-3 p-2 rounded-lg transition-all text-left ${
+                i === currentIndex ? 'bg-[#202020] border border-[#0078F2]' : 'bg-[#1a1a1a] hover:bg-[#202020]'
+              }`}
+            >
+              <div className="w-14 h-14 rounded overflow-hidden flex-shrink-0">
+                {item.url ? (
+                  <img src={item.url} alt={item.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-[#303030] flex items-center justify-center">
+                    <span className="text-gray-500 text-sm font-bold">{item.name.charAt(0)}</span>
+                  </div>
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h4 className="text-xs font-medium text-white truncate">{item.name}</h4>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {typeof item.price === 'number' ? `₺${item.price.toLocaleString('tr-TR')}` : item.price}
+                </p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Game Carousel Section
 const GameCarouselSection = ({
   title,
@@ -395,24 +533,27 @@ const GameCard = ({ item }: { item: HomepageItem }) => {
         )}
       </div>
       <div>
-        <p className="text-xs text-gray-500 mb-1">{item.category?.name || 'Oyun'}</p>
+        <p className="text-xs text-gray-500 mb-1">{item.categoryName || item.category?.name || 'Oyun'}</p>
         <h4 className="text-sm font-medium text-white truncate group-hover:text-[#00D4FF] transition-colors">
           {item.name}
         </h4>
         <p className="text-sm text-gray-400 mt-1">
-          {typeof item.price === 'number' ? `₺${item.price}` : item.price}
+          {typeof item.price === 'number' ? `₺${item.price.toLocaleString('tr-TR')}` : item.price}
         </p>
+        {item.people && item.people > 0 && (
+          <p className="text-xs text-gray-500 mt-1">{item.people} kişi inceledi</p>
+        )}
       </div>
     </Link>
   );
 };
 
-// Free Games Section - Epic Style
+// Featured Games Section - Epic Style
 const FreeGamesSection = ({ items }: { items: HomepageItem[] }) => (
   <div className="px-4 lg:px-8 py-8">
     <div className="flex items-center gap-3 mb-6">
-      <Gift className="h-6 w-6 text-[#00D4FF]" />
-      <h2 className="text-xl font-bold text-white">Ücretsiz Oyunlar</h2>
+      <TrendingUp className="h-6 w-6 text-[#00D4FF]" />
+      <h2 className="text-xl font-bold text-white">Öne Çıkan Ürünler</h2>
       <Link
         to="/oyunlar"
         className="ml-auto px-4 py-2 text-sm font-medium text-white border border-[#404040] rounded hover:bg-[#202020] transition-colors"
@@ -434,39 +575,97 @@ const FreeGamesSection = ({ items }: { items: HomepageItem[] }) => (
                 src={item.url}
                 alt={item.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              ) : (
+              />
+            ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <span className="text-gray-600 text-6xl font-bold">{item.name.charAt(0)}</span>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-4">
             <div className="flex items-center gap-2 mb-2">
               {i === 0 ? (
                 <span className="px-3 py-1 bg-[#0078F2] text-white text-xs font-bold rounded">
-                  ŞİMDİ ÜCRETSİZ
+                  ÖNE ÇIKAN
                 </span>
               ) : (
-                <span className="flex items-center gap-1 px-3 py-1 bg-purple-600 text-white text-xs font-bold rounded">
-                  <Clock className="h-3 w-3" />
-                  YAKINDA
+                <span className="flex items-center gap-1 px-3 py-1 bg-[#0066CC] text-white text-xs font-bold rounded">
+                  <Sparkles className="h-3 w-3" />
+                  POPÜLER
                 </span>
+              )}
+            </div>
+            <p className="text-xs text-gray-400 mb-1">{item.categoryName || item.category?.name}</p>
+            <h3 className="text-lg font-bold text-white">{item.name}</h3>
+            <div className="flex items-center gap-3 mt-2">
+              <span className="text-white font-bold">
+                {typeof item.price === 'number' ? `₺${item.price.toLocaleString('tr-TR')}` : item.price}
+              </span>
+{item.people && item.people > 0 && (
+                  <span className="text-xs text-gray-400">{item.people} kişi inceledi</span>
                 )}
             </div>
-            <h3 className="text-lg font-bold text-white">{item.name}</h3>
-            <p className="text-sm text-gray-400 mt-1">
-              {typeof item.price === 'number' && item.price > 0
-                ? `Değeri: ₺${item.price}`
-                : 'Ücretsiz'}
-            </p>
           </div>
-      </Link>
+        </Link>
       ))}
     </div>
   </div>
 );
+
+// Popular Section - Horizontal List Design
+const PopularSection = ({ items }: { items: HomepageItem[] }) => {
+  return (
+    <div className="px-4 lg:px-8 py-8">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold text-white">Popüler Ürünler</h2>
+        <Link
+          to="/oyunlar"
+          className="text-sm text-gray-400 hover:text-white transition-colors"
+        >
+          Tümünü Gör
+        </Link>
+      </div>
+
+      <div className="bg-[#1a1a1a] rounded-lg divide-y divide-white/5">
+        {items.slice(0, 5).map((item, index) => (
+          <Link
+            key={item.id}
+            to={`/epin/${item.slug}`}
+            className="flex items-center gap-4 p-4 hover:bg-white/5 transition-colors group"
+          >
+            <span className="w-6 text-center text-sm font-medium text-gray-500">
+              {index + 1}
+            </span>
+            <div className="w-14 h-14 rounded-lg overflow-hidden bg-[#202020] flex-shrink-0">
+              {item.url ? (
+                <img src={item.url} alt={item.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-gray-600 font-bold">{item.name.charAt(0)}</span>
+                </div>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-gray-500 mb-0.5">{item.categoryName || item.category?.name}</p>
+              <h4 className="text-sm font-medium text-white truncate group-hover:text-[#00D4FF] transition-colors">
+                {item.name}
+              </h4>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-semibold text-white">
+                {typeof item.price === 'number' ? `₺${item.price.toLocaleString('tr-TR')}` : item.price}
+              </p>
+              {item.people && item.people > 0 && (
+                <p className="text-xs text-gray-500">{item.people} kişi inceledi</p>
+              )}
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 // Categories Section
 const CategoriesSection = ({ categories }: { categories: Category[] }) => (

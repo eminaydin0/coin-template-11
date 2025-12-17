@@ -154,7 +154,7 @@ const Header = ({ onOpenSearch, hideHeader = false }: HeaderProps) => {
             >
               <ShoppingCart className="h-5 w-5" />
               {getItemCount() > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#26bbff] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#0078F2] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                   {getItemCount()}
                 </span>
               )}
@@ -214,7 +214,7 @@ const Header = ({ onOpenSearch, hideHeader = false }: HeaderProps) => {
                 </Link>
                 <Link
                   to="/kayit-ol"
-                  className="px-5 py-2 text-sm font-medium bg-[#26bbff] text-black rounded hover:bg-[#3dc2ff] transition-colors"
+                  className="px-5 py-2 text-sm font-medium bg-[#0078F2] text-white rounded hover:bg-[#0066CC] transition-colors"
                 >
                   Kayıt Ol
                 </Link>
@@ -284,7 +284,7 @@ const Header = ({ onOpenSearch, hideHeader = false }: HeaderProps) => {
                 <Link
                   to="/kayit-ol"
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex-1 text-center px-4 py-3 bg-[#26bbff] text-black rounded font-medium"
+                  className="flex-1 text-center px-4 py-3 bg-[#0078F2] text-white rounded font-medium"
                 >
                   Kayıt Ol
                 </Link>

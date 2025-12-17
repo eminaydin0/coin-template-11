@@ -62,8 +62,13 @@ const LiveSupportPage = () => {
 
           {/* Contact Form */}
           <div className="bg-[#202020] rounded-lg p-6">
-            <h2 className="text-xl font-bold text-white mb-6">Mesaj Gönderin</h2>
-            <ContactForm subject="Canlı Destek Talebi" />
+            <ContactForm 
+              title="Mesaj Gönderin" 
+              description="Size en kısa sürede dönüş yapacağız" 
+              method="support" 
+              backLink="/" 
+              backText="Ana Sayfa" 
+            />
           </div>
         </div>
       </div>

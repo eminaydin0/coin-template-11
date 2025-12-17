@@ -74,8 +74,13 @@ const ReturnsPage = () => {
 
           {/* Contact Form */}
           <div className="bg-[#202020] rounded-lg p-6">
-            <h2 className="text-xl font-bold text-white mb-6">İade Talebi</h2>
-            <ContactForm subject="İade Talebi" />
+            <ContactForm 
+              title="İade Talebi" 
+              description="İade talebinizi detaylı açıklayın" 
+              method="return" 
+              backLink="/" 
+              backText="Ana Sayfa" 
+            />
           </div>
         </div>
       </div>
